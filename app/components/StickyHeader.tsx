@@ -87,7 +87,7 @@ const StickyHeader: React.FC = () => {
                         onClick: () => {
                           // Open url in a new tab
                           window.open(
-                            `https://explorer.aptoslabs.com/txn/${signedTx.hash}/?network=devnet`,
+                            `https://explorer.devnet.m1.movementlabs.xyz/#/${signedTx.hash}/?network=local`,
                             '_blank'
                           )
                         },

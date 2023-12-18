@@ -8,7 +8,7 @@ const Background: React.FC = () => {
     >
       <div className='flex justify-center items-center h-screen'>
         <div className='text-white' style={{ fontSize: '12em', fontWeight: 800 }}>
-          Aptos
+          Movement
         </div>
       </div>
     </div>

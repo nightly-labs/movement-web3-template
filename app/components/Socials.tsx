@@ -25,7 +25,7 @@ const Socials: React.FC = () => {
           <Image src={DiscordIcon} alt='Discord' height={45} />
         </a>
         <a
-          href='https://github.com/nightly-labs/aptos-web3-template'
+          href='https://github.com/nightly-labs/movement-web3-template'
           target='_blank'
           rel='noopener noreferrer'
           className=' mt-[2px] transform transition-transform duration-300  hover:-rotate-12'

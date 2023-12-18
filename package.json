@@ -1,7 +1,7 @@
 {
-  "name": "aptos-web3-template",
+  "name": "movement-web3-template",
   "version": "0.1.0",
-  "description": "Template for Aptos Web3 Apps",
+  "description": "Template for Movement Web3 Apps",
   "author": "Nightly Labs",
   "license": "MIT",
   "private": false,

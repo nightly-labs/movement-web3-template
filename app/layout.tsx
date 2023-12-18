@@ -5,23 +5,23 @@ import Head from 'next/head'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'aptos Template App',
+  title: 'movement Template App',
   description:
-    'Start your aptos journey here, without unnecessary configuration and setup. Just clone it and code on top of it. Powered by Nightly Wallet.',
+    'Start your movement journey here, without unnecessary configuration and setup. Just clone it and code on top of it. Powered by Nightly Wallet.',
   twitter: {
-    title: 'aptos Template App',
+    title: 'movement Template App',
     description:
-      'Start your aptos journey here, without unnecessary configuration and setup. Just clone it and code on top of it. Powered by Nightly Wallet.',
-    images: 'https://aptos-web3-template.nightly.app/preview.png',
+      'Start your movement journey here, without unnecessary configuration and setup. Just clone it and code on top of it. Powered by Nightly Wallet.',
+    images: 'https://movement-web3-template.nightly.app/preview.png',
     card: 'summary_large_image',
     site: '@nightly_app',
   },
   openGraph: {
-    title: 'aptos Template App',
+    title: 'movement Template App',
     description:
-      'Start your aptos journey here, without unnecessary configuration and setup. Just clone it and code on top of it. Powered by Nightly Wallet.',
-    images: 'https://aptos-web3-template.nightly.app/preview.png',
-    url: 'https://aptos-web3-template.nightly.app',
+      'Start your movement journey here, without unnecessary configuration and setup. Just clone it and code on top of it. Powered by Nightly Wallet.',
+    images: 'https://movement-web3-template.nightly.app/preview.png',
+    url: 'https://movement-web3-template.nightly.app',
     type: 'website',
   },
 }

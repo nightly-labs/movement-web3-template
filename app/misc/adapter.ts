@@ -1,13 +1,13 @@
-import { NightlyConnectAptosAdapter } from '@nightlylabs/wallet-selector-aptos'
+import { NightlyConnectAptosAdapter as NCMovementAdapter } from '@nightlylabs/wallet-selector-aptos'
 
-let _adapter: NightlyConnectAptosAdapter | undefined
+let _adapter: NCMovementAdapter | undefined
 export const getAdapter = async (persisted = true) => {
   if (_adapter) return _adapter
-  _adapter = await NightlyConnectAptosAdapter.build(
+  _adapter = await NCMovementAdapter.build(
     {
       appMetadata: {
-        name: 'Aptos Template',
-        description: 'Aptos Template',
+        name: 'Movement Template',
+        description: 'Movement Template',
         icon: 'https://docs.nightly.app/img/logo.png',
       },
     },
