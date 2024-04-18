@@ -8,7 +8,7 @@ import { AccountInfo, AptosSignMessageInput, UserResponseStatus } from '@aptos-l
 import { getAptos } from '../misc/aptos'
 
 const StickyHeader: React.FC = () => {
-  const [userAccount, setUserAccount] = React.useState<AccountInfo | undefined>()
+  const [userAccount, setUserAccount] = React.useState<AccountInfo>()
   useEffect(() => {
     const init = async () => {
       const adapter = await getAdapter()
@@ -62,6 +62,7 @@ const StickyHeader: React.FC = () => {
               try {
                 const response = await adapter.connect()
                 if (response.status === UserResponseStatus.APPROVED) {
+                  console.log(response)
                   setUserAccount(response.args)
                   toast.success('Wallet connected!')
                 } else {
@@ -88,38 +89,48 @@ const StickyHeader: React.FC = () => {
             <>
               <ActionStarryButton
                 onClick={async () => {
-                  const signTransaction = async () => {
-                    const adapter = await getAdapter()
-                    const aptos = getAptos()
-                    const transaction = await aptos.transaction.build.simple({
-                      sender: userAccount!.address.toString(),
-                      data: {
-                        function: '0x1::coin::transfer',
-                        typeArguments: ['0x1::aptos_coin::AptosCoin'],
-                        functionArguments: [
-                          '0x7d6735f1d1b158ea340f252e0d30c4ab5596fc12bbf5267f43ac45989b9fd520',
-                          100,
-                        ],
-                      },
-                    })
-                    const signedTx = await adapter.signAndSubmitTransaction({
-                      rawTransaction: transaction.rawTransaction,
-                    })
+                  const signingToast = toast.info('Signing Transaction...')
+
+                  const adapter = await getAdapter()
+                  const aptos = getAptos()
+                  const transaction = await aptos.transaction.build.simple({
+                    sender: userAccount!.address.toString(),
+                    data: {
+                      function: '0x1::coin::transfer',
+                      typeArguments: ['0x1::aptos_coin::AptosCoin'],
+                      functionArguments: [
+                        '0x99881b6cdf90c9edb04e6b5912c236630b55587161dedc1fc05d53f72eec07e8',
+                        1_000_000,
+                      ],
+                    },
+                  })
+                  try {
+                    const signedTx = await adapter.signAndSubmitTransaction(transaction)
+                    toast.dismiss(signingToast)
+
                     if (signedTx.status !== UserResponseStatus.APPROVED) {
                       throw new Error('Transaction rejected')
                     }
+                    toast.success('Transaction signed and submitted!', {
+                      action: {
+                        label: 'View on Explorer',
+                        onClick: () => {
+                          window.open(
+                            `https://explorer.devnet.m1.movementlabs.xyz/#/txn/${signedTx.args.hash}`,
+                            '_blank'
+                          )
+                        },
+                      },
+                    })
+                  } catch (error) {
+                    toast.error('Transaction rejected')
+                    toast.dismiss(signingToast)
+                    return
                   }
-                  toast.promise(signTransaction, {
-                    loading: 'Signing Transaction...',
-                    success: (_) => {
-                      return `Transaction signed!`
-                    },
-                    error: 'Operation has been rejected!',
-                  })
                 }}
                 name='Sign and Submit'
               ></ActionStarryButton>
-              <ActionStarryButton
+              {/* <ActionStarryButton
                 onClick={async () => {
                   const signTransaction = async () => {
                     const adapter = await getAdapter()
@@ -130,14 +141,12 @@ const StickyHeader: React.FC = () => {
                         function: '0x1::coin::transfer',
                         typeArguments: ['0x1::aptos_coin::AptosCoin'],
                         functionArguments: [
-                          '0x7d6735f1d1b158ea340f252e0d30c4ab5596fc12bbf5267f43ac45989b9fd520',
+                          '0x99881b6cdf90c9edb04e6b5912c236630b55587161dedc1fc05d53f72eec07e8',
                           100,
                         ],
                       },
                     })
-                    const signedTx = await adapter.signTransaction({
-                      rawTransaction: transaction.rawTransaction,
-                    })
+                    const signedTx = await adapter.signTransaction(transaction)
                     if (signedTx.status !== UserResponseStatus.APPROVED) {
                       throw new Error('Transaction rejected')
                     }
@@ -151,7 +160,7 @@ const StickyHeader: React.FC = () => {
                   })
                 }}
                 name='Sign Transaction'
-              ></ActionStarryButton>
+              ></ActionStarryButton> */}
 
               <ActionStarryButton
                 onClick={async () => {
