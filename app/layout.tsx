@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: 'Movement Template App',
     description:
       'Start your Movement journey here, without unnecessary configuration and setup. Just clone it and code on top of it. Powered by Nightly Wallet.',
-    images: 'https://movement-web3-template.nightly.app/preview.png',
+    images: 'https://movement-web3-template.nightly.app/metatag.png',
     card: 'summary_large_image',
     site: '@nightly_app',
   },
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     title: 'Movement Template App',
     description:
       'Start your Movement journey here, without unnecessary configuration and setup. Just clone it and code on top of it. Powered by Nightly Wallet.',
-    images: 'https://movement-web3-template.nightly.app/preview.png',
+    images: 'https://movement-web3-template.nightly.app/metatag.png',
     url: 'https://movement-web3-template.nightly.app',
     type: 'website',
   },
