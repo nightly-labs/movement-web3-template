@@ -4,8 +4,9 @@ import { toast } from 'sonner'
 import { getAdapter } from '../misc/adapter'
 import ActionStarryButton from './ActionStarryButton'
 import StarryButton from './StarryButton'
-import { AccountInfo, AptosSignMessageInput, UserResponseStatus } from '@aptos-labs/wallet-standard'
+import { AccountInfo, UserResponseStatus } from '@aptos-labs/wallet-standard'
 import { getAptos } from '../misc/aptos'
+import { Network } from '@aptos-labs/ts-sdk'
 
 const StickyHeader: React.FC = () => {
   const [userAccount, setUserAccount] = React.useState<AccountInfo>()
@@ -14,12 +15,37 @@ const StickyHeader: React.FC = () => {
       const adapter = await getAdapter()
       if (await adapter.canEagerConnect()) {
         try {
-          const response = await adapter.connect()
+          const response = await adapter.connect(undefined, {
+            chainId: 4,
+            name: Network.CUSTOM,
+            url: 'https://aptos.devnet.m1.movementlabs.xyz',
+          })
           if (response.status === UserResponseStatus.APPROVED) {
             setUserAccount(response.args)
           }
         } catch (error) {
           await adapter.disconnect().catch(() => {})
+          console.log(error)
+          return
+        }
+        try {
+          // Check chainId
+          const chainId = await adapter.network()
+          if (chainId.chainId !== 4) {
+            // If chainId is different than 4 (movement devnet) change it
+            const changeNetworkResponse = await adapter.changeNetwork({
+              chainId: 4,
+              name: Network.CUSTOM,
+              url: 'https://aptos.devnet.m1.movementlabs.xyz',
+            })
+            if (changeNetworkResponse.status === UserResponseStatus.APPROVED) {
+              toast.success('Network changed!')
+            } else {
+              toast.error('User rejected network change')
+              return
+            }
+          }
+        } catch (error) {
           console.log(error)
         }
       }
@@ -60,18 +86,43 @@ const StickyHeader: React.FC = () => {
             onConnect={async () => {
               const adapter = await getAdapter()
               try {
-                const response = await adapter.connect()
+                const response = await adapter.connect(undefined, {
+                  chainId: 4,
+                  name: Network.CUSTOM,
+                  url: 'https://aptos.devnet.m1.movementlabs.xyz',
+                })
                 if (response.status === UserResponseStatus.APPROVED) {
-                  console.log(response)
                   setUserAccount(response.args)
                   toast.success('Wallet connected!')
                 } else {
                   toast.error('User rejected connection')
+                  return
                 }
               } catch (error) {
                 toast.error('Wallet connection failed!')
                 // If error, disconnect ignore error
                 await adapter.disconnect().catch(() => {})
+                return
+              }
+              try {
+                // Check chainId
+                const chainId = await adapter.network()
+                if (chainId.chainId !== 4) {
+                  // If chainId is different than 4 (movement devnet) change it
+                  const changeNetworkResponse = await adapter.changeNetwork({
+                    chainId: 4,
+                    name: Network.CUSTOM,
+                    url: 'https://aptos.devnet.m1.movementlabs.xyz',
+                  })
+                  if (changeNetworkResponse.status === UserResponseStatus.APPROVED) {
+                    toast.success('Network changed!')
+                  } else {
+                    toast.error('User rejected network change')
+                    return
+                  }
+                }
+              } catch (error) {
+                console.log(error)
               }
             }}
             onDisconnect={async () => {
