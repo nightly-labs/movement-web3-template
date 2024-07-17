@@ -5,67 +5,12 @@ import { getAdapter } from '../misc/adapter'
 import ActionStarryButton from './ActionStarryButton'
 import StarryButton from './StarryButton'
 import { AccountInfo, UserResponseStatus } from '@aptos-labs/wallet-standard'
-import { getAptos } from '../misc/aptos'
+import { getMovement } from '../misc/movement'
 import { Network } from '@aptos-labs/ts-sdk'
 
 const StickyHeader: React.FC = () => {
   const [userAccount, setUserAccount] = React.useState<AccountInfo>()
-  useEffect(() => {
-    const init = async () => {
-      const adapter = await getAdapter()
-      if (await adapter.canEagerConnect()) {
-        try {
-          const response = await adapter.connect(undefined, {
-            chainId: 4,
-            name: Network.CUSTOM,
-            url: 'https://aptos.devnet.m1.movementlabs.xyz',
-          })
-          if (response.status === UserResponseStatus.APPROVED) {
-            setUserAccount(response.args)
-          }
-        } catch (error) {
-          await adapter.disconnect().catch(() => {})
-          console.log(error)
-          return
-        }
-        try {
-          // Check chainId
-          const chainId = await adapter.network()
-          if (chainId.chainId !== 4) {
-            // If chainId is different than 4 (movement devnet) change it
-            const changeNetworkResponse = await adapter.changeNetwork({
-              chainId: 4,
-              name: Network.CUSTOM,
-              url: 'https://aptos.devnet.m1.movementlabs.xyz',
-            })
-            if (changeNetworkResponse.status === UserResponseStatus.APPROVED) {
-              toast.success('Network changed!')
-            } else {
-              toast.error('User rejected network change')
-              return
-            }
-          }
-        } catch (error) {
-          console.log(error)
-        }
-      }
-      // Events
-      adapter.on('connect', (accInfo) => {
-        setUserAccount(accInfo)
-      })
 
-      adapter.on('disconnect', () => {
-        setUserAccount(undefined)
-        console.log('adapter disconnected')
-      })
-
-      adapter.on('accountChange', (accInfo) => {
-        setUserAccount(accInfo)
-      })
-    }
-    init()
-    // Try eagerly connect
-  }, [])
   return (
     <header className='fixed top-0 left-0 w-full bg-opacity-50  p-6 z-10'>
       <div className='flex items-center justify-between'>
@@ -87,9 +32,9 @@ const StickyHeader: React.FC = () => {
               const adapter = await getAdapter()
               try {
                 const response = await adapter.connect(undefined, {
-                  chainId: 4,
+                  chainId: 27,
                   name: Network.CUSTOM,
-                  url: 'https://aptos.devnet.m1.movementlabs.xyz',
+                  url: 'https://aptos.testnet.suzuka.movementlabs.xyz/v1',
                 })
                 if (response.status === UserResponseStatus.APPROVED) {
                   setUserAccount(response.args)
@@ -107,12 +52,12 @@ const StickyHeader: React.FC = () => {
               try {
                 // Check chainId
                 const chainId = await adapter.network()
-                if (chainId.chainId !== 4) {
+                if (chainId.chainId !== 27) {
                   // If chainId is different than 4 (movement devnet) change it
                   const changeNetworkResponse = await adapter.changeNetwork({
-                    chainId: 4,
+                    chainId: 27,
                     name: Network.CUSTOM,
-                    url: 'https://aptos.devnet.m1.movementlabs.xyz',
+                    url: 'https://aptos.testnet.suzuka.movementlabs.xyz/v1',
                   })
                   if (changeNetworkResponse.status === UserResponseStatus.APPROVED) {
                     toast.success('Network changed!')
@@ -143,14 +88,14 @@ const StickyHeader: React.FC = () => {
                   const signingToast = toast.info('Signing Transaction...')
 
                   const adapter = await getAdapter()
-                  const aptos = getAptos()
+                  const aptos = getMovement()
                   const transaction = await aptos.transaction.build.simple({
                     sender: userAccount!.address.toString(),
                     data: {
                       function: '0x1::coin::transfer',
                       typeArguments: ['0x1::aptos_coin::AptosCoin'],
                       functionArguments: [
-                        '0x99881b6cdf90c9edb04e6b5912c236630b55587161dedc1fc05d53f72eec07e8',
+                        '0xd61ba4b804e961f81e362968f1daf580889346b7cfff0e06f0e0106094b60b5d',
                         1_000_000,
                       ],
                     },
@@ -167,7 +112,7 @@ const StickyHeader: React.FC = () => {
                         label: 'View on Explorer',
                         onClick: () => {
                           window.open(
-                            `https://explorer.devnet.m1.movementlabs.xyz/#/txn/${signedTx.args.hash}`,
+                            `https://explorer.testnet.suzuka.movementlabs.xyz/#/txn/${signedTx.args.hash}`,
                             '_blank'
                           )
                         },
