@@ -10,6 +10,7 @@ import { Network } from "@aptos-labs/ts-sdk";
 
 const StickyHeader: React.FC = () => {
   const [userAccount, setUserAccount] = React.useState<AccountInfo>();
+  const [currentNetwork, setCurrentNetwork] = React.useState<string>("Aptos");
 
   return (
     <header className="fixed top-0 left-0 w-full bg-opacity-50  p-6 z-10">
@@ -93,7 +94,8 @@ const StickyHeader: React.FC = () => {
                   const signingToast = toast.info("Signing Transaction...");
 
                   const adapter = await getAdapter();
-                  const aptos = getMovement();
+                  const network = await adapter.network();
+                  const aptos = getMovement(network.chainId);
                   const transaction = await aptos.transaction.build.simple({
                     sender: userAccount!.address.toString(),
                     data: {
@@ -184,6 +186,49 @@ const StickyHeader: React.FC = () => {
                   });
                 }}
                 name="Sign Message"
+              ></ActionStarryButton>
+
+              <ActionStarryButton
+                onClick={async () => {
+                  try {
+                    const adapter = await getAdapter();
+                    const network = await adapter.network();
+                    console.log(network.chainId);
+
+                    let changeNetworkResponse;
+                    if (network.chainId === 27) {
+                      // Movement network is active
+                      changeNetworkResponse = await adapter.changeNetwork({
+                        chainId: 1,
+                        name: Network.MAINNET,
+                        url: "https://fullnode.mainnet.aptoslabs.com/v1",
+                      });
+                    } else if ([1, 2, 147].includes(network.chainId)) {
+                      // Aptos network is active (mainnet, devnet or testnet)
+                      changeNetworkResponse = await adapter.changeNetwork({
+                        chainId: 27,
+                        name: Network.CUSTOM,
+                        url: "https://aptos.testnet.suzuka.movementlabs.xyz/v1",
+                      });
+                    }
+
+                    if (
+                      changeNetworkResponse &&
+                      changeNetworkResponse.status ===
+                        UserResponseStatus.APPROVED
+                    ) {
+                      const changedNetwork = await adapter.network();
+                      toast.success(`Changed network to ${currentNetwork}!`);
+                      setCurrentNetwork(
+                        changedNetwork.chainId === 27 ? "Aptos" : "Movement"
+                      );
+                    }
+                  } catch (error) {
+                    toast.error("Couldn't change network");
+                    console.log(error);
+                  }
+                }}
+                name={`Change to ${currentNetwork}`}
               ></ActionStarryButton>
             </>
           )}
