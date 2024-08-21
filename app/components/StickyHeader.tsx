@@ -7,6 +7,7 @@ import StarryButton from "./StarryButton";
 import { AccountInfo, UserResponseStatus } from "@aptos-labs/wallet-standard";
 import { getMovement } from "../misc/movement";
 import { Network } from "@aptos-labs/ts-sdk";
+import { networkMap } from "../misc/utils";
 
 const StickyHeader: React.FC = () => {
   const [userAccount, setUserAccount] = React.useState<AccountInfo>();
@@ -193,23 +194,18 @@ const StickyHeader: React.FC = () => {
                   try {
                     const adapter = await getAdapter();
                     const network = await adapter.network();
-                    console.log(network.chainId);
 
                     let changeNetworkResponse;
                     if (network.chainId === 27) {
                       // Movement network is active
-                      changeNetworkResponse = await adapter.changeNetwork({
-                        chainId: 1,
-                        name: Network.MAINNET,
-                        url: "https://fullnode.mainnet.aptoslabs.com/v1",
-                      });
+                      changeNetworkResponse = await adapter.changeNetwork(
+                        networkMap[1]
+                      );
                     } else if ([1, 2, 147].includes(network.chainId)) {
                       // Aptos network is active (mainnet, devnet or testnet)
-                      changeNetworkResponse = await adapter.changeNetwork({
-                        chainId: 27,
-                        name: Network.CUSTOM,
-                        url: "https://aptos.testnet.suzuka.movementlabs.xyz/v1",
-                      });
+                      changeNetworkResponse = await adapter.changeNetwork(
+                        networkMap[27]
+                      );
                     }
 
                     if (

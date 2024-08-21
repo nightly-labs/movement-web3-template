@@ -1,14 +1,13 @@
-import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+import { Aptos, AptosConfig } from "@aptos-labs/ts-sdk";
+import { networkMap } from "./utils";
 
 let _provider: Aptos | undefined;
 let _prevChainId: number | undefined;
-const movementEndpoint = "https://aptos.testnet.suzuka.movementlabs.xyz/v1";
-const aptosEndpoint = "https://fullnode.mainnet.aptoslabs.com/v1";
 export const getMovement = (chainId: number) => {
   if (_provider && chainId === _prevChainId) return _provider;
   const conf = new AptosConfig({
-    network: chainId === 1 ? Network.MAINNET : undefined,
-    fullnode: chainId === 1 ? aptosEndpoint : movementEndpoint,
+    network: networkMap[chainId].name,
+    fullnode: networkMap[chainId].url,
   });
   _prevChainId = chainId;
   _provider = new Aptos(conf);
