@@ -11,7 +11,45 @@ import { networkMap } from "../misc/utils";
 
 const StickyHeader: React.FC = () => {
   const [userAccount, setUserAccount] = React.useState<AccountInfo>();
-  const [currentNetwork, setCurrentNetwork] = React.useState<string>("Aptos");
+  const [currentNetwork, setCurrentNetwork] = React.useState<string>();
+
+  useEffect(() => {
+    const init = async () => {
+      const adapter = await getAdapter();
+      if (await adapter.canEagerConnect()) {
+        try {
+          const response = await adapter.connect();
+          if (response.status === UserResponseStatus.APPROVED) {
+            setUserAccount(response.args);
+            const network = await adapter.network();
+            setCurrentNetwork(network.chainId === 27 ? "Aptos" : "Movement");
+          }
+        } catch (error) {
+          await adapter.disconnect().catch(() => {});
+          console.log(error);
+        }
+      }
+      // Events
+      adapter.on("connect", (accInfo) => {
+        if (accInfo && "address" in accInfo) {
+          setUserAccount(accInfo);
+        }
+      });
+
+      adapter.on("disconnect", () => {
+        setUserAccount(undefined);
+        console.log("adapter disconnected");
+      });
+
+      adapter.on("accountChange", (accInfo) => {
+        if (accInfo && "address" in accInfo) {
+          setUserAccount(accInfo);
+        }
+      });
+    };
+    init();
+    // Try eagerly connect
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 w-full bg-opacity-50  p-6 z-10">
@@ -40,6 +78,10 @@ const StickyHeader: React.FC = () => {
                 });
                 if (response.status === UserResponseStatus.APPROVED) {
                   setUserAccount(response.args);
+                  const network = await adapter.network();
+                  setCurrentNetwork(
+                    network.chainId === 27 ? "Aptos" : "Movement"
+                  );
                   toast.success("Wallet connected!");
                 } else {
                   toast.error("User rejected connection");
@@ -64,6 +106,9 @@ const StickyHeader: React.FC = () => {
                   if (
                     changeNetworkResponse.status === UserResponseStatus.APPROVED
                   ) {
+                    setCurrentNetwork(
+                      chainId.chainId === 27 ? "Movement" : "Aptos"
+                    );
                     toast.success("Network changed!");
                   } else {
                     toast.error("User rejected network change");
@@ -189,43 +234,45 @@ const StickyHeader: React.FC = () => {
                 name="Sign Message"
               ></ActionStarryButton>
 
-              <ActionStarryButton
-                onClick={async () => {
-                  try {
-                    const adapter = await getAdapter();
-                    const network = await adapter.network();
+              {currentNetwork ? (
+                <ActionStarryButton
+                  onClick={async () => {
+                    try {
+                      const adapter = await getAdapter();
+                      const network = await adapter.network();
 
-                    let changeNetworkResponse;
-                    if (network.chainId === 27) {
-                      // Movement network is active
-                      changeNetworkResponse = await adapter.changeNetwork(
-                        networkMap[1]
-                      );
-                    } else if ([1, 2, 147].includes(network.chainId)) {
-                      // Aptos network is active (mainnet, devnet or testnet)
-                      changeNetworkResponse = await adapter.changeNetwork(
-                        networkMap[27]
-                      );
-                    }
+                      let changeNetworkResponse;
+                      if (network.chainId === 27) {
+                        // Movement network is active
+                        changeNetworkResponse = await adapter.changeNetwork(
+                          networkMap[1]
+                        );
+                      } else if ([1, 2, 147].includes(network.chainId)) {
+                        // Aptos network is active (mainnet, devnet or testnet)
+                        changeNetworkResponse = await adapter.changeNetwork(
+                          networkMap[27]
+                        );
+                      }
 
-                    if (
-                      changeNetworkResponse &&
-                      changeNetworkResponse.status ===
-                        UserResponseStatus.APPROVED
-                    ) {
-                      const changedNetwork = await adapter.network();
-                      toast.success(`Changed network to ${currentNetwork}!`);
-                      setCurrentNetwork(
-                        changedNetwork.chainId === 27 ? "Aptos" : "Movement"
-                      );
+                      if (
+                        changeNetworkResponse &&
+                        changeNetworkResponse.status ===
+                          UserResponseStatus.APPROVED
+                      ) {
+                        const changedNetwork = await adapter.network();
+                        toast.success(`Changed network to ${currentNetwork}!`);
+                        setCurrentNetwork(
+                          changedNetwork.chainId === 27 ? "Aptos" : "Movement"
+                        );
+                      }
+                    } catch (error) {
+                      toast.error("Couldn't change network");
+                      console.log(error);
                     }
-                  } catch (error) {
-                    toast.error("Couldn't change network");
-                    console.log(error);
-                  }
-                }}
-                name={`Change to ${currentNetwork}`}
-              ></ActionStarryButton>
+                  }}
+                  name={`Change to ${currentNetwork}`}
+                ></ActionStarryButton>
+              ) : null}
             </>
           )}
         </div>
