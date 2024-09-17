@@ -167,7 +167,7 @@ const StickyHeader: React.FC = () => {
                         label: "View on Explorer",
                         onClick: () => {
                           window.open(
-                            `https://explorer.testnet.suzuka.movementlabs.xyz/#/txn/${signedTx.args.hash}`,
+                            `https://explorer.movementlabs.xyz/txn/${signedTx.args.hash}?network=testnet`,
                             "_blank"
                           );
                         },
