@@ -240,6 +240,7 @@ const StickyHeader: React.FC = () => {
                     try {
                       const adapter = await getAdapter();
                       const network = await adapter.network();
+                      console.log(network);
 
                       let changeNetworkResponse;
                       if (network.chainId === 27) {
@@ -247,7 +248,7 @@ const StickyHeader: React.FC = () => {
                         changeNetworkResponse = await adapter.changeNetwork(
                           networkMap[1]
                         );
-                      } else if ([1, 2, 147].includes(network.chainId)) {
+                      } else if ([1, 2, 149].includes(network.chainId)) {
                         // Aptos network is active (mainnet, devnet or testnet)
                         changeNetworkResponse = await adapter.changeNetwork(
                           networkMap[27]
