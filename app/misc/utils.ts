@@ -23,3 +23,5 @@ export const networkMap: Record<number, AptosChangeNetworkInput> = {
     url: "https://aptos.testnet.suzuka.movementlabs.xyz/v1",
   },
 };
+
+export const MOVEMENT_NETWORK = "Movement";

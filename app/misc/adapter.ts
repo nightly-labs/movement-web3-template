@@ -1,4 +1,5 @@
 import { NightlyConnectAptosAdapter } from "@nightlylabs/wallet-selector-aptos";
+import { MOVEMENT_NETWORK } from "./utils";
 
 let _adapter: NightlyConnectAptosAdapter | undefined;
 export const getAdapter = async (persisted = true) => {
@@ -10,6 +11,7 @@ export const getAdapter = async (persisted = true) => {
         description: "Movement Template",
         icon: "https://docs.nightly.app/img/logo.png",
       },
+      network: MOVEMENT_NETWORK,
     },
     {},
     undefined,
