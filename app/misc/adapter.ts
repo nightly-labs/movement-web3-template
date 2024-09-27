@@ -11,6 +11,7 @@ export const getAdapter = async (persisted = true) => {
         description: "Movement Template",
         icon: "https://docs.nightly.app/img/logo.png",
       },
+      // specify different network than Aptos for deeplink support
       network: MOVEMENT_NETWORK,
     },
     {},
