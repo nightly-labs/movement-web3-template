@@ -14,21 +14,25 @@ import { Network } from "@aptos-labs/ts-sdk";
 import { networkMap } from "../misc/utils";
 import { NightlyConnectAptosAdapter } from "@nightlylabs/wallet-selector-aptos";
 
+const MOVEMENT_CHAIN_IDS = [27, 177, 250];
+const APTOS_CHAIN_IDS = [1, 2, 157];
+const REQUESTED_NETWORK = networkMap[27];
+
 const StickyHeader: React.FC = () => {
   const [userAccount, setUserAccount] = React.useState<AccountInfo>();
-  const [currentNetwork, setCurrentNetwork] = React.useState<string>();
+  const [networkToChangeTo, setNetworkToChangeTo] = React.useState<string>();
 
   const changeNetworkBeforeAction = useCallback(
     async (network: NetworkInfo, adapter: NightlyConnectAptosAdapter) => {
-      if (network.chainId !== 27) {
+      if (!MOVEMENT_CHAIN_IDS.includes(network.chainId)) {
         const changeNetworkResponse = await adapter.changeNetwork(
-          networkMap[27]
+          REQUESTED_NETWORK
         );
         if (
           changeNetworkResponse &&
           changeNetworkResponse.status === UserResponseStatus.APPROVED
         ) {
-          setCurrentNetwork("Aptos");
+          setNetworkToChangeTo("Aptos");
           toast.success("Network changed!");
         } else {
           toast.error("User rejected network change");
@@ -48,7 +52,11 @@ const StickyHeader: React.FC = () => {
           if (response.status === UserResponseStatus.APPROVED) {
             setUserAccount(response.args);
             const network = await adapter.network();
-            setCurrentNetwork(network.chainId === 27 ? "Aptos" : "Movement");
+            setNetworkToChangeTo(
+              MOVEMENT_CHAIN_IDS.includes(network.chainId)
+                ? "Aptos"
+                : "Movement"
+            );
           }
         } catch (error) {
           await adapter.disconnect().catch(() => {});
@@ -99,13 +107,15 @@ const StickyHeader: React.FC = () => {
               try {
                 const response = await adapter.connect(
                   undefined,
-                  networkMap[27]
+                  REQUESTED_NETWORK
                 );
                 if (response.status === UserResponseStatus.APPROVED) {
                   setUserAccount(response.args);
                   const network = await adapter.network();
-                  setCurrentNetwork(
-                    network.chainId === 27 ? "Aptos" : "Movement"
+                  setNetworkToChangeTo(
+                    MOVEMENT_CHAIN_IDS.includes(network.chainId)
+                      ? "Aptos"
+                      : "Movement"
                   );
                   toast.success("Wallet connected!");
                 } else {
@@ -250,7 +260,7 @@ const StickyHeader: React.FC = () => {
                 name="Sign Message"
               ></ActionStarryButton>
 
-              {currentNetwork ? (
+              {networkToChangeTo ? (
                 <ActionStarryButton
                   onClick={async () => {
                     try {
@@ -258,15 +268,15 @@ const StickyHeader: React.FC = () => {
                       const network = await adapter.network();
 
                       let changeNetworkResponse;
-                      if (network.chainId === 27) {
+                      if (MOVEMENT_CHAIN_IDS.includes(network.chainId)) {
                         // Movement network is active
                         changeNetworkResponse = await adapter.changeNetwork(
                           networkMap[1]
                         );
-                      } else if ([1, 2, 149].includes(network.chainId)) {
+                      } else if (APTOS_CHAIN_IDS.includes(network.chainId)) {
                         // Aptos network is active (mainnet, devnet or testnet)
                         changeNetworkResponse = await adapter.changeNetwork(
-                          networkMap[27]
+                          REQUESTED_NETWORK
                         );
                       }
 
@@ -276,9 +286,13 @@ const StickyHeader: React.FC = () => {
                           UserResponseStatus.APPROVED
                       ) {
                         const changedNetwork = await adapter.network();
-                        toast.success(`Changed network to ${currentNetwork}!`);
-                        setCurrentNetwork(
-                          changedNetwork.chainId === 27 ? "Aptos" : "Movement"
+                        toast.success(
+                          `Changed network to ${networkToChangeTo}!`
+                        );
+                        setNetworkToChangeTo(
+                          MOVEMENT_CHAIN_IDS.includes(changedNetwork.chainId)
+                            ? "Aptos"
+                            : "Movement"
                         );
                       }
                     } catch (error) {
@@ -286,7 +300,7 @@ const StickyHeader: React.FC = () => {
                       console.log(error);
                     }
                   }}
-                  name={`Change to ${currentNetwork}`}
+                  name={`Change to ${networkToChangeTo}`}
                 ></ActionStarryButton>
               ) : null}
             </>
