@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@aptos-labs/ts-sdk": "^1.12.2",
-    "@nightlylabs/wallet-selector-aptos": "^0.1.13",
+    "@nightlylabs/wallet-selector-aptos": "^0.1.15",
     "@aptos-labs/wallet-standard": "^0.0.12",
     "@react-spring/three": "9.1.1",
     "@react-spring/web": "9.1.1",
