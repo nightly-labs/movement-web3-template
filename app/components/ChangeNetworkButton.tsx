@@ -43,6 +43,11 @@ const NETWORKS: INetwork[] = [
     name: "Bardock Testnet",
     url: "https://aptos.testnet.bardock.movementlabs.xyz/v1",
   },
+  {
+    chainId: 126,
+    name: "Move Mainnet",
+    url: "https://mainnet.movementnetwork.xyz/v1",
+  },
 ];
 
 const ChangeNetworkButton: React.FC<ChangeNetworkButtonProps> = ({
