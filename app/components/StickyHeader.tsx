@@ -11,13 +11,13 @@ import {
 } from "@aptos-labs/wallet-standard";
 import { getMovement } from "../misc/movement";
 import { Network } from "@aptos-labs/ts-sdk";
-import { networkMap } from "../misc/utils";
+import { NETWORK_MAP } from "../misc/utils";
 import { NightlyConnectAptosAdapter } from "@nightlylabs/wallet-selector-aptos";
 import ChangeNetworkButton from "./ChangeNetworkButton";
 
-const MOVEMENT_CHAIN_IDS = [27, 177, 250];
+const MOVEMENT_CHAIN_IDS = [27, 177, 250, 126];
 const APTOS_CHAIN_IDS = [1, 2, 157];
-const REQUESTED_NETWORK = networkMap[27];
+const REQUESTED_NETWORK = NETWORK_MAP["126"];
 
 const StickyHeader: React.FC = () => {
   const [userAccount, setUserAccount] = React.useState<AccountInfo>();
@@ -259,10 +259,12 @@ const StickyHeader: React.FC = () => {
                     if (network.chainId === chainId) {
                       return;
                     }
-
-                    const changeNetworkResponse = await adapter.changeNetwork(
-                      networkMap[chainId]
-                    );
+                    const existNetwork = NETWORK_MAP[chainId.toString()];
+                    const changeNetworkResponse = await adapter.changeNetwork({
+                      chainId,
+                      name: existNetwork.name,
+                      url: existNetwork.url,
+                    });
 
                     if (
                       changeNetworkResponse &&

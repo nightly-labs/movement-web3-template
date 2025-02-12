@@ -4,7 +4,6 @@
   "description": "Template for Movement M1 Web3 Apps",
   "author": "Nightly Labs",
   "license": "MIT",
-  "private": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,9 +11,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aptos-labs/ts-sdk": "^1.12.2",
-    "@aptos-labs/wallet-standard": "^0.0.12",
-    "@nightlylabs/wallet-selector-aptos": "^0.1.15",
+    "@aptos-labs/ts-sdk": "1.35.0",
+    "@aptos-labs/wallet-standard": "0.2.0",
+    "@nightlylabs/wallet-selector-aptos": "0.1.15",
     "@react-spring/three": "9.1.1",
     "@react-spring/web": "9.1.1",
     "@react-three/drei": "4.1.8",
@@ -24,9 +23,11 @@
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
+    "axios": "^1.7.9",
     "babel-plugin-macros": "^3.1.0",
     "eslint": "8.49.0",
     "eslint-config-next": "13.5.1",
+    "got": "^14.4.6",
     "next": "13.5.1",
     "postcss": "8.4.30",
     "react": "18.2.0",
