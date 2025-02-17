@@ -152,21 +152,18 @@ const StickyHeader: React.FC = () => {
                     // we have to do it here because the flow on mobile is different
                     await changeNetworkBeforeAction(network, adapter);
                     network = await adapter.network();
-                    const aptos = getMovement(network.chainId);
-                    const transaction = await aptos.transaction.build.simple({
-                      sender: userAccount!.address.toString(),
-                      data: {
-                        function: "0x1::coin::transfer",
-                        typeArguments: ["0x1::aptos_coin::AptosCoin"],
-                        functionArguments: [
-                          "0xd61ba4b804e961f81e362968f1daf580889346b7cfff0e06f0e0106094b60b5d",
-                          1_000_000,
-                        ],
-                      },
+                    const payload: any = {
+                      function: "0x1::coin::transfer",
+                      typeArguments: ["0x1::aptos_coin::AptosCoin"],
+                      functionArguments: [
+                        "0xd61ba4b804e961f81e362968f1daf580889346b7cfff0e06f0e0106094b60b5d",
+                        1_000_000,
+                      ],
+                    };
+
+                    const signedTx = await adapter.signAndSubmitTransaction({
+                      payload,
                     });
-                    const signedTx = await adapter.signAndSubmitTransaction(
-                      transaction
-                    );
 
                     toast.dismiss(signingToast);
 
