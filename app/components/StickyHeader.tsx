@@ -15,8 +15,8 @@ import { NETWORK_MAP } from "../misc/utils";
 import { NightlyConnectAptosAdapter } from "@nightlylabs/wallet-selector-aptos";
 import ChangeNetworkButton from "./ChangeNetworkButton";
 
-const MOVEMENT_CHAIN_IDS = [27, 177, 250, 126];
-const APTOS_CHAIN_IDS = [1, 2, 157];
+const MOVEMENT_CHAIN_IDS = [177, 250, 126];
+const APTOS_CHAIN_IDS = [1, 2, 173];
 const REQUESTED_NETWORK = NETWORK_MAP["126"];
 
 const StickyHeader: React.FC = () => {
