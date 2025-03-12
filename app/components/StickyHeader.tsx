@@ -153,11 +153,11 @@ const StickyHeader: React.FC = () => {
                     await changeNetworkBeforeAction(network, adapter);
                     network = await adapter.network();
                     const payload: any = {
-                      function: "0x1::coin::transfer",
+                      function: "0x1::aptos_account::transfer_coins",
                       typeArguments: ["0x1::aptos_coin::AptosCoin"],
                       functionArguments: [
                         "0xd61ba4b804e961f81e362968f1daf580889346b7cfff0e06f0e0106094b60b5d",
-                        1_000_000,
+                        100,
                       ],
                     };
 
@@ -175,7 +175,7 @@ const StickyHeader: React.FC = () => {
                         label: "View on Explorer",
                         onClick: () => {
                           window.open(
-                            `https://explorer.movementlabs.xyz/txn/${signedTx.args.hash}?network=testnet`,
+                            `https://explorer.movementlabs.xyz/txn/${signedTx.args.hash}`,
                             "_blank"
                           );
                         },
